@@ -12,34 +12,40 @@ struct SearchView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                // Header scuro con branding
-                VStack(spacing: 8) {
+                // Header scuro solo branding
+                VStack(spacing: 4) {
                     Text("BrunoBlock")
-                        .font(.system(size: 26, weight: .heavy))
+                        .font(.system(size: 24, weight: .heavy))
                         .foregroundColor(gold)
                     Text("Bruno, non passa nessuno")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.white.opacity(0.5))
-                    
-                    // Search bar
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(darkBg)
+                
+                // Barra di ricerca su sfondo chiaro
+                VStack(spacing: 12) {
                     HStack(spacing: 10) {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(.white.opacity(0.5))
-                        TextField("Cerca numero di telefono...", text: $phoneNumber)
+                            .foregroundColor(.gray)
+                        TextField("Inserisci numero di telefono...", text: $phoneNumber)
                             .keyboardType(.phonePad)
                             .font(.system(size: 17))
-                            .foregroundColor(.white)
                     }
                     .padding(14)
-                    .background(Color.white.opacity(0.1))
+                    .background(Color(.systemBackground))
                     .cornerRadius(12)
-                    .padding(.top, 12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color(.systemGray3), lineWidth: 1)
+                    )
                     
                     Button(action: search) {
                         HStack(spacing: 8) {
                             if isLoading {
-                                ProgressView()
-                                    .tint(darkBg)
+                                ProgressView().tint(.white)
                             } else {
                                 Image(systemName: "shield.checkered")
                                 Text("Verifica numero")
@@ -48,38 +54,35 @@ struct SearchView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(14)
-                        .background(phoneNumber.isEmpty ? Color.white.opacity(0.2) : gold)
-                        .foregroundColor(phoneNumber.isEmpty ? .white.opacity(0.5) : .black)
+                        .background(phoneNumber.isEmpty ? Color.gray.opacity(0.4) : Color.blue)
+                        .foregroundColor(.white)
                         .cornerRadius(12)
                     }
                     .disabled(phoneNumber.isEmpty || isLoading)
                 }
-                .padding(20)
-                .padding(.top, 8)
-                .background(darkBg)
+                .padding(16)
                 
-                // Risultati
-                VStack(spacing: 16) {
-                    if let error = errorMessage {
-                        HStack {
-                            Image(systemName: "wifi.slash")
-                            Text(error)
-                        }
-                        .font(.system(size: 14))
-                        .foregroundColor(.red)
-                        .padding(12)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.red.opacity(0.1))
-                        .cornerRadius(10)
-                        .padding(.horizontal)
+                // Errore
+                if let error = errorMessage {
+                    HStack {
+                        Image(systemName: "wifi.slash")
+                        Text(error)
                     }
-                    
-                    if let result = result {
-                        ResultCard(result: result)
-                            .padding(.horizontal)
-                    }
+                    .font(.system(size: 14))
+                    .foregroundColor(.red)
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(10)
+                    .padding(.horizontal, 16)
                 }
-                .padding(.top, 16)
+                
+                // Risultato
+                if let result = result {
+                    ResultCard(result: result)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 4)
+                }
             }
         }
         .background(Color(.systemGroupedBackground))
@@ -139,25 +142,23 @@ struct ResultCard: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Score header
+            // Score
             VStack(spacing: 10) {
                 Text(result.number)
                     .font(.system(size: 17, weight: .bold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.9))
                 
                 Text(result.found ? "\(result.spam_score)" : "?")
-                    .font(.system(size: 64, weight: .heavy))
+                    .font(.system(size: 58, weight: .heavy))
                     .foregroundColor(.white)
                 
                 Text(result.found ? "spam score su 100" : "nessuno score")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.6))
                 
                 HStack(spacing: 6) {
-                    Image(systemName: riskIcon)
-                        .font(.system(size: 14))
-                    Text(riskLabel)
-                        .font(.system(size: 14, weight: .bold))
+                    Image(systemName: riskIcon).font(.system(size: 14))
+                    Text(riskLabel).font(.system(size: 14, weight: .bold))
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -167,41 +168,33 @@ struct ResultCard: View {
             }
             .frame(maxWidth: .infinity)
             .padding(24)
-            .background(
-                LinearGradient(
-                    colors: [scoreColor, scoreColor.opacity(0.7)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .background(scoreColor.gradient)
             
-            // Details
+            // Dettagli
             if result.found {
                 VStack(spacing: 0) {
                     DetailRow(label: "Categoria", value: formatCategory(result.category))
-                    DetailRow(label: "Segnalazioni totali", value: "\(result.total_reports)")
+                    DetailRow(label: "Segnalazioni", value: "\(result.total_reports)")
                     if let recent = result.recent_reports_24h {
-                        DetailRow(label: "Segnalazioni oggi", value: "\(recent)")
+                        DetailRow(label: "Oggi", value: "\(recent)")
                     }
                     DetailRow(label: "Operatore", value: result.operator_name ?? "Sconosciuto")
-                    DetailRow(label: "Azione consigliata", value: actionText, valueColor: actionColor, isLast: true)
+                    DetailRow(label: "Consiglio", value: actionText, valueColor: actionColor, isLast: true)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)
             } else if let prefixRisk = result.prefix_risk, prefixRisk > 30 {
                 HStack(spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.orange)
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.orange)
                     Text(result.prefix_info ?? "Prefisso a rischio")
-                        .font(.system(size: 14))
-                        .foregroundColor(.orange)
+                        .font(.system(size: 14)).foregroundColor(.orange)
                 }
                 .padding(16)
             }
         }
         .background(Color(.systemBackground))
         .cornerRadius(20)
-        .shadow(color: scoreColor.opacity(0.2), radius: 12, y: 4)
+        .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
     }
     
     func formatCategory(_ category: String?) -> String {
@@ -252,9 +245,7 @@ struct DetailRow: View {
         }
         .padding(.vertical, 11)
         .overlay(alignment: .bottom) {
-            if !isLast {
-                Divider()
-            }
+            if !isLast { Divider() }
         }
     }
 }

@@ -65,7 +65,7 @@ router.get('/sync/ios', (req, res) => {
   const minScore = parseInt(req.query.min_score) || 60;
 
   const numbers = req.db.prepare(
-    'SELECT number, spam_score, category FROM phone_numbers WHERE ((spam_score >= ? AND unique_reporters >= 3) OR spam_score >= 90) AND updated_at > ? ORDER BY spam_score DESC LIMIT ?'
+    'SELECT number, spam_score, category FROM phone_numbers WHERE ((spam_score >= ? AND unique_reporters >= 1) OR spam_score >= 1) AND updated_at > ? ORDER BY spam_score DESC LIMIT ?'
   ).all(minScore, since, limit);
 
   const formatted = numbers.map(n => ({

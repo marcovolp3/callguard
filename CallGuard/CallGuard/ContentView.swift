@@ -7,58 +7,55 @@ struct ContentView: View {
     @State private var clipboardNumber: String?
     @State private var showClipboardBanner = false
     @State private var prefillNumber: String = ""
+    @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
         ZStack {
-            // Main app
             TabView(selection: $selectedTab) {
                 SearchView()
                     .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("Cerca")
+                        Label("Cerca", systemImage: "magnifyingglass")
                     }
                     .tag(0)
                 
                 ReportView(prefillNumber: $prefillNumber)
                     .tabItem {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                        Text("Segnala")
+                        Label("Segnala", systemImage: "exclamationmark.triangle.fill")
                     }
                     .tag(1)
                 
                 FeedView()
                     .tabItem {
-                        Image(systemName: "list.bullet.rectangle")
-                        Text("Feed")
+                        Label("Feed", systemImage: "list.bullet.rectangle")
                     }
                     .tag(2)
                 
                 SettingsView()
                     .tabItem {
-                        Image(systemName: "gearshape.fill")
-                        Text("Impostazioni")
+                        Label("Impostazioni", systemImage: "gearshape.fill")
                     }
                     .tag(3)
             }
-            .tint(Color("AccentGold"))
+            .tint(.blue)
             
-            // Clipboard banner
             if showClipboardBanner, let number = clipboardNumber {
                 VStack {
                     ClipboardBanner(number: number, onReport: {
+                        UIPasteboard.general.string = ""
                         prefillNumber = number
                         selectedTab = 1
-                        showClipboardBanner = false
+                        withAnimation { showClipboardBanner = false }
                     }, onDismiss: {
-                        showClipboardBanner = false
+                        UIPasteboard.general.string = ""
+                        withAnimation { showClipboardBanner = false }
                     })
+                    .padding(.top, 50)
                     Spacer()
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))
                 .zIndex(100)
             }
             
-            // Splash screen
             if showSplash {
                 SplashScreen()
                     .transition(.opacity)
@@ -69,40 +66,37 @@ struct ContentView: View {
             OnboardingView(isPresented: $showOnboarding)
         }
         .onAppear {
-            // Splash per 2.5 secondi
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 withAnimation(.easeOut(duration: 0.5)) {
                     showSplash = false
                 }
             }
-            // Clipboard check dopo splash
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active && !showSplash {
                 checkClipboard()
             }
         }
     }
     
     private func checkClipboard() {
-        guard let content = UIPasteboard.general.string else { return }
-        let cleaned = content.replacingOccurrences(of: " ", with: "")
-            .replacingOccurrences(of: "-", with: "")
+        guard !showClipboardBanner else { return }
         
-        if cleaned.count >= 8 && cleaned.count <= 16 {
-            let digits = cleaned.filter { $0.isNumber || $0 == "+" }
-            if digits.count >= 8 {
-                clipboardNumber = APIService.cleanPhoneNumber(content)
-                withAnimation(.spring(response: 0.4)) {
-                    showClipboardBanner = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                    withAnimation { showClipboardBanner = false }
-                }
-            }
+        let pasteboard = UIPasteboard.general
+        guard pasteboard.hasStrings, let content = pasteboard.string else { return }
+        
+        let digitsOnly = content.filter { $0.isNumber }
+        guard digitsOnly.count >= 8 && digitsOnly.count <= 15 else { return }
+        
+        let cleaned = APIService.cleanPhoneNumber(content)
+        guard APIService.isValidPhoneNumber(cleaned) else { return }
+        
+        clipboardNumber = cleaned
+        withAnimation(.spring(response: 0.4)) {
+            showClipboardBanner = true
         }
     }
 }
-
-// MARK: - Splash Screen
 
 struct SplashScreen: View {
     var body: some View {
@@ -110,40 +104,27 @@ struct SplashScreen: View {
             Color(red: 0.08, green: 0.11, blue: 0.14)
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                Spacer()
-                
-                // Se l'immagine "splash_bruno" è in Assets, usa Image("splash_bruno")
-                // Altrimenti usa il fallback testuale
-                if UIImage(named: "splash_bruno") != nil {
-                    Image("splash_bruno")
-                        .resizable()
-                        .scaledToFit()
-                        .ignoresSafeArea()
-                } else {
-                    // Fallback testuale
-                    VStack(spacing: 20) {
-                        Text("🛡️")
-                            .font(.system(size: 80))
-                        
-                        Text("BrunoBlock")
-                            .font(.system(size: 38, weight: .heavy))
-                            .foregroundColor(Color(red: 0.77, green: 0.64, blue: 0.27))
-                        
-                        Text("Con Bruno\nnon passa nessuno")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundColor(Color(red: 0.77, green: 0.64, blue: 0.27).opacity(0.8))
-                            .multilineTextAlignment(.center)
-                    }
+            if UIImage(named: "splash_bruno") != nil {
+                Image("splash_bruno")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+            } else {
+                VStack(spacing: 20) {
+                    Text("🛡️")
+                        .font(.system(size: 80))
+                    Text("BrunoBlock")
+                        .font(.system(size: 38, weight: .heavy))
+                        .foregroundColor(Color(red: 0.77, green: 0.64, blue: 0.27))
+                    Text("Con Bruno\nnon passa nessuno")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundColor(Color(red: 0.77, green: 0.64, blue: 0.27).opacity(0.8))
+                        .multilineTextAlignment(.center)
                 }
-                
-                Spacer()
             }
         }
     }
 }
-
-// MARK: - Clipboard Banner
 
 struct ClipboardBanner: View {
     let number: String
@@ -154,7 +135,7 @@ struct ClipboardBanner: View {
         HStack(spacing: 12) {
             Image(systemName: "doc.on.clipboard.fill")
                 .font(.system(size: 20))
-                .foregroundColor(Color(red: 0.77, green: 0.64, blue: 0.27))
+                .foregroundColor(.blue)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text("Numero negli appunti")
@@ -177,22 +158,18 @@ struct ClipboardBanner: View {
             }
             
             Button(action: onDismiss) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.gray)
-                    .padding(6)
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.gray.opacity(0.5))
             }
         }
         .padding(14)
-        .background(.ultraThinMaterial)
+        .background(Color(.systemBackground))
         .cornerRadius(16)
-        .shadow(color: .black.opacity(0.12), radius: 12, y: 6)
+        .shadow(color: .black.opacity(0.15), radius: 12, y: 6)
         .padding(.horizontal, 16)
-        .padding(.top, 8)
     }
 }
-
-// MARK: - Onboarding
 
 struct OnboardingView: View {
     @Binding var isPresented: Bool
@@ -207,11 +184,9 @@ struct OnboardingView: View {
             
             VStack(spacing: 0) {
                 TabView(selection: $currentPage) {
-                    // Pagina 1
                     VStack(spacing: 24) {
                         Spacer()
-                        Text("🛡️")
-                            .font(.system(size: 80))
+                        Text("🛡️").font(.system(size: 80))
                         Text("BrunoBlock")
                             .font(.system(size: 32, weight: .heavy))
                             .foregroundColor(gold)
@@ -224,14 +199,11 @@ struct OnboardingView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 40)
                         Spacer()
-                    }
-                    .tag(0)
+                    }.tag(0)
                     
-                    // Pagina 2
                     VStack(spacing: 24) {
                         Spacer()
-                        Text("📞")
-                            .font(.system(size: 80))
+                        Text("📞").font(.system(size: 80))
                         Text("Come funziona")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.white)
@@ -242,18 +214,15 @@ struct OnboardingView: View {
                         }
                         .padding(.horizontal, 40)
                         Spacer()
-                    }
-                    .tag(1)
+                    }.tag(1)
                     
-                    // Pagina 3
                     VStack(spacing: 24) {
                         Spacer()
-                        Text("⚙️")
-                            .font(.system(size: 80))
+                        Text("⚙️").font(.system(size: 80))
                         Text("Attiva la protezione")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(.white)
-                        Text("Serve un passaggio nelle impostazioni di iOS:")
+                        Text("Per completare l'attivazione, vai nelle impostazioni di iOS:")
                             .font(.system(size: 15))
                             .foregroundColor(.white.opacity(0.5))
                             .multilineTextAlignment(.center)
@@ -265,26 +234,13 @@ struct OnboardingView: View {
                             OnboardingStepRow(number: "4", text: "Attiva BrunoBlock")
                         }
                         .padding(.horizontal, 40)
-                        
-                        Button(action: {
-                            if let url = URL(string: UIApplication.openSettingsURLString) {
-                                UIApplication.shared.open(url)
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "gear")
-                                Text("Apri Impostazioni")
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(14)
-                            .background(Color.white.opacity(0.15))
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                        }
-                        .padding(.horizontal, 40)
+                        Text("iOS non permette di aprire questa schermata direttamente. Segui i passaggi qui sopra.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.35))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
                         Spacer()
-                    }
-                    .tag(2)
+                    }.tag(2)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 
@@ -315,7 +271,6 @@ struct OnboardingFeature: View {
     let icon: String
     let color: Color
     let text: String
-    
     var body: some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
@@ -334,7 +289,6 @@ struct OnboardingFeature: View {
 struct OnboardingStepRow: View {
     let number: String
     let text: String
-    
     var body: some View {
         HStack(spacing: 12) {
             Text(number)
@@ -349,4 +303,3 @@ struct OnboardingStepRow: View {
         }
     }
 }
-

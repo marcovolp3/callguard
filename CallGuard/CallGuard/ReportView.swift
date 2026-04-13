@@ -32,45 +32,54 @@ struct ReportView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                // Header
+                // Header scuro
                 VStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 32))
+                        .font(.system(size: 28))
                         .foregroundColor(.red)
                     Text("Segnala un numero")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.white)
                     Text("Aiuta la community a proteggersi")
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.5))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                .padding(.vertical, 20)
                 .background(darkBg)
                 
-                // Form
-                VStack(spacing: 16) {
-                    // Phone
-                    FormField(label: "Numero di telefono") {
+                // Form su sfondo chiaro
+                VStack(spacing: 18) {
+                    // Numero
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("NUMERO DI TELEFONO")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.secondary)
                         TextField("+39 333 1234567", text: $phoneNumber)
                             .keyboardType(.phonePad)
-                            .padding(12)
-                            .background(Color(.systemGray6))
+                            .font(.system(size: 17))
+                            .padding(13)
+                            .background(Color(.systemBackground))
                             .cornerRadius(10)
-                    }
-                    
-                    if !phoneNumber.isEmpty && !APIService.isValidPhoneNumber(phoneNumber) {
-                        HStack {
-                            Image(systemName: "exclamationmark.circle")
-                            Text("Usa solo cifre, es: 3331234567")
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(phoneNumber.isEmpty ? Color(.systemGray3) :
+                                            APIService.isValidPhoneNumber(phoneNumber) ? Color.green.opacity(0.5) : Color.orange.opacity(0.5),
+                                            lineWidth: 1.5)
+                            )
+                        
+                        if !phoneNumber.isEmpty && !APIService.isValidPhoneNumber(phoneNumber) {
+                            Label("Usa solo cifre, es: 3331234567", systemImage: "exclamationmark.circle")
+                                .font(.system(size: 12))
+                                .foregroundColor(.orange)
                         }
-                        .font(.system(size: 12))
-                        .foregroundColor(.orange)
-                        .padding(.horizontal, 4)
                     }
                     
-                    // Type
-                    FormField(label: "Tipo di segnalazione") {
+                    // Tipo
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("TIPO DI SEGNALAZIONE")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.secondary)
                         Picker("Tipo", selection: $reportType) {
                             ForEach(reportTypes, id: \.0) { type in
                                 Text(type.1).tag(type.0)
@@ -78,13 +87,20 @@ struct ReportView: View {
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
-                        .background(Color(.systemGray6))
+                        .padding(13)
+                        .background(Color(.systemBackground))
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(.systemGray3), lineWidth: 1)
+                        )
                     }
                     
-                    // Category
-                    FormField(label: "Categoria") {
+                    // Categoria
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("CATEGORIA")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.secondary)
                         Picker("Categoria", selection: $category) {
                             ForEach(categories, id: \.0) { cat in
                                 Text(cat.1).tag(cat.0)
@@ -92,26 +108,37 @@ struct ReportView: View {
                         }
                         .pickerStyle(.menu)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
-                        .background(Color(.systemGray6))
+                        .padding(13)
+                        .background(Color(.systemBackground))
                         .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(.systemGray3), lineWidth: 1)
+                        )
                     }
                     
-                    // Notes
-                    FormField(label: "Note (opzionale)") {
+                    // Note
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("NOTE (OPZIONALE)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.secondary)
                         TextField("Es: Voce registrata, offerta gas...", text: $description, axis: .vertical)
                             .lineLimit(3...6)
-                            .padding(12)
-                            .background(Color(.systemGray6))
+                            .font(.system(size: 16))
+                            .padding(13)
+                            .background(Color(.systemBackground))
                             .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color(.systemGray3), lineWidth: 1)
+                            )
                     }
                     
-                    // Submit
+                    // Bottone invio
                     Button(action: submitReport) {
                         HStack(spacing: 8) {
                             if isLoading {
-                                ProgressView()
-                                    .tint(.white)
+                                ProgressView().tint(.white)
                             } else {
                                 Image(systemName: "paperplane.fill")
                                 Text("Invia segnalazione")
@@ -120,13 +147,13 @@ struct ReportView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(15)
-                        .background(canSubmit ? Color.red : Color.gray.opacity(0.5))
+                        .background(canSubmit ? Color.red : Color.gray.opacity(0.4))
                         .foregroundColor(.white)
                         .cornerRadius(14)
                     }
                     .disabled(!canSubmit || isLoading)
                     
-                    // Messages
+                    // Messaggi
                     if let success = successMessage {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
@@ -135,7 +162,7 @@ struct ReportView: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.green)
                         .frame(maxWidth: .infinity)
-                        .padding(16)
+                        .padding(14)
                         .background(Color.green.opacity(0.1))
                         .cornerRadius(12)
                     }
@@ -188,7 +215,11 @@ struct ReportView: View {
                     description: description
                 )
                 await MainActor.run {
-                    successMessage = "Score: \(response.new_spam_score)/100 (\(response.total_reports) segnalazioni)"
+                    if response.message.contains("già segnalato") {
+                        successMessage = "Hai già segnalato questo numero oggi. Grazie!"
+                    } else {
+                        successMessage = "Score: \(response.new_spam_score)/100 (\(response.total_reports) segnalazioni)"
+                    }
                     phoneNumber = ""
                     description = ""
                     isLoading = false
@@ -199,21 +230,6 @@ struct ReportView: View {
                     isLoading = false
                 }
             }
-        }
-    }
-}
-
-struct FormField<Content: View>: View {
-    let label: String
-    @ViewBuilder let content: () -> Content
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(label)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.secondary)
-                .textCase(.uppercase)
-            content()
         }
     }
 }
