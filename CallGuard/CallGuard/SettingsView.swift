@@ -134,6 +134,9 @@ struct SettingsView: View {
                 let numbers = try await APIService.shared.syncNumbers()
                 await MainActor.run {
                     syncedNumbers = numbers.count
+                    
+                    verifySharedFile()
+                    
                     reloadCallDirectory()
                     let formatter = DateFormatter()
                     formatter.dateFormat = "HH:mm, d MMM"
@@ -149,14 +152,40 @@ struct SettingsView: View {
         }
     }
     
+    private func verifySharedFile() {
+        guard let sharedURL = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.marcovolp3.CallGuard"
+        ) else {
+            print("DEBUG: App Group NON trovato!")
+            return
+        }
+        
+        let fileURL = sharedURL.appendingPathComponent("spam_numbers.json")
+        
+        guard let data = try? Data(contentsOf: fileURL) else {
+            print("DEBUG: File spam_numbers.json NON trovato!")
+            return
+        }
+        
+        guard let numbers = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
+            print("DEBUG: JSON non valido!")
+            return
+        }
+        
+        print("DEBUG: File contiene \(numbers.count) numeri")
+        for (i, item) in numbers.enumerated() where (item["number"] as? Int64 ?? 0) == 393272386349 {
+            print("DEBUG: [\(i)] number=\(item["number"] ?? "nil") label=\(item["label"] ?? "nil")")
+        }
+    }
+    
     private func reloadCallDirectory() {
         CXCallDirectoryManager.sharedInstance.reloadExtension(
             withIdentifier: "com.marcovolp3.CallGuard.CallGuardExtension"
         ) { error in
             if let error = error {
-                print("Errore reload CallDirectory: \(error)")
+                print("DEBUG: Errore reload CallDirectory: \(error)")
             } else {
-                print("CallDirectory aggiornata con successo")
+                print("DEBUG: CallDirectory aggiornata con successo")
             }
         }
     }

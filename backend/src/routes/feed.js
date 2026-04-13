@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-// GET /api/feed — ultimi numeri segnalati
 router.get('/feed', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit) || 20, 50);
 
@@ -10,6 +9,7 @@ router.get('/feed', (req, res) => {
       p.number,
       p.spam_score,
       p.total_reports,
+      p.unique_reporters,
       p.category,
       p.operator_name,
       p.last_reported_at,
@@ -28,6 +28,7 @@ router.get('/feed', (req, res) => {
     number_full: n.number,
     spam_score: n.spam_score,
     total_reports: n.total_reports,
+    unique_reporters: n.unique_reporters || 0,
     reports_today: n.reports_today,
     category: n.category,
     category_label: getCategoryLabel(n.category),
@@ -44,7 +45,6 @@ router.get('/feed', (req, res) => {
   });
 });
 
-// GET /api/stats — statistiche generali
 router.get('/stats', (req, res) => {
   const totalNumbers = req.db.prepare('SELECT COUNT(*) as n FROM phone_numbers').get();
   const totalReports = req.db.prepare('SELECT COUNT(*) as n FROM reports').get();
@@ -69,7 +69,6 @@ router.get('/stats', (req, res) => {
 });
 
 function maskNumber(number) {
-  // +393331234567 → +39333****567
   if (number.length > 8) {
     return number.substring(0, number.length - 7) + '****' + number.substring(number.length - 3);
   }

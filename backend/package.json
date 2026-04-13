@@ -1,13 +1,13 @@
 {
   "name": "callguard-backend",
-  "version": "1.0.0",
-  "description": "CallGuard API — identificazione e segnalazione chiamate spam",
+  "version": "2.0.0",
+  "description": "BrunoBlock API — identificazione e segnalazione chiamate spam",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
   },
-  "keywords": ["spam", "callguard", "caller-id"],
+  "keywords": ["spam", "brunoblock", "caller-id"],
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^11.0.0",
