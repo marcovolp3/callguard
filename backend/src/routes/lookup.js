@@ -65,7 +65,7 @@ router.get('/sync/ios', (req, res) => {
   const numbers = req.db.prepare(`
     SELECT number, spam_score, category 
     FROM phone_numbers 
-    WHERE spam_score >= 60 AND updated_at > ?
+    WHERE spam score >= 1 AND updated_at > ?
     ORDER BY spam_score DESC 
     LIMIT ?
   `).all(since, limit);

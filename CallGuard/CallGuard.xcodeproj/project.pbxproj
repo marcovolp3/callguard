@@ -1,0 +1,535 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		98CAF1192F8B9D3B0077F187 /* CallGuardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF1182F8B9D3B0077F187 /* CallGuardApp.swift */; };
+		98CAF11B2F8B9D3B0077F187 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF11A2F8B9D3B0077F187 /* ContentView.swift */; };
+		98CAF11D2F8B9D3D0077F187 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98CAF11C2F8B9D3D0077F187 /* Assets.xcassets */; };
+		98CAF1202F8B9D3D0077F187 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98CAF11F2F8B9D3D0077F187 /* Preview Assets.xcassets */; };
+		98CAF1272F8B9FD90077F187 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF1262F8B9FD90077F187 /* APIService.swift */; };
+		98CAF1292F8B9FF40077F187 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF1282F8B9FF40077F187 /* SearchView.swift */; };
+		98CAF12B2F8BA0020077F187 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF12A2F8BA0010077F187 /* ReportView.swift */; };
+		98CAF12D2F8BA00F0077F187 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF12C2F8BA00E0077F187 /* FeedView.swift */; };
+		98CAF12F2F8BA0160077F187 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98CAF12E2F8BA0160077F187 /* SettingsView.swift */; };
+		98EACAF22F8BAA4700C0CC5C /* CallDirectoryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EACAF12F8BAA4700C0CC5C /* CallDirectoryHandler.swift */; };
+		98EACAF62F8BAA4700C0CC5C /* CallGuardExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 98EACAEF2F8BAA4700C0CC5C /* CallGuardExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		98EACAF42F8BAA4700C0CC5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98CAF10D2F8B9D3B0077F187 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 98EACAEE2F8BAA4700C0CC5C;
+			remoteInfo = CallGuardExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		98EACAF72F8BAA4700C0CC5C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				98EACAF62F8BAA4700C0CC5C /* CallGuardExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		98CAF1152F8B9D3B0077F187 /* CallGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CallGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98CAF1182F8B9D3B0077F187 /* CallGuardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGuardApp.swift; sourceTree = "<group>"; };
+		98CAF11A2F8B9D3B0077F187 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		98CAF11C2F8B9D3D0077F187 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		98CAF11F2F8B9D3D0077F187 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		98CAF1262F8B9FD90077F187 /* APIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		98CAF1282F8B9FF40077F187 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		98CAF12A2F8BA0010077F187 /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		98CAF12C2F8BA00E0077F187 /* FeedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		98CAF12E2F8BA0160077F187 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		98EACAEF2F8BAA4700C0CC5C /* CallGuardExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CallGuardExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		98EACAF12F8BAA4700C0CC5C /* CallDirectoryHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDirectoryHandler.swift; sourceTree = "<group>"; };
+		98EACAF32F8BAA4700C0CC5C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		98EACAFB2F8BB2BC00C0CC5C /* CallGuard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallGuard.entitlements; sourceTree = "<group>"; };
+		98EACAFC2F8BB2FB00C0CC5C /* CallGuardExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CallGuardExtension.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		98CAF1122F8B9D3B0077F187 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98EACAEC2F8BAA4700C0CC5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		98CAF10C2F8B9D3B0077F187 = {
+			isa = PBXGroup;
+			children = (
+				98CAF1172F8B9D3B0077F187 /* CallGuard */,
+				98EACAF02F8BAA4700C0CC5C /* CallGuardExtension */,
+				98CAF1162F8B9D3B0077F187 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		98CAF1162F8B9D3B0077F187 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				98CAF1152F8B9D3B0077F187 /* CallGuard.app */,
+				98EACAEF2F8BAA4700C0CC5C /* CallGuardExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		98CAF1172F8B9D3B0077F187 /* CallGuard */ = {
+			isa = PBXGroup;
+			children = (
+				98EACAFB2F8BB2BC00C0CC5C /* CallGuard.entitlements */,
+				98CAF12E2F8BA0160077F187 /* SettingsView.swift */,
+				98CAF12C2F8BA00E0077F187 /* FeedView.swift */,
+				98CAF12A2F8BA0010077F187 /* ReportView.swift */,
+				98CAF1282F8B9FF40077F187 /* SearchView.swift */,
+				98CAF1262F8B9FD90077F187 /* APIService.swift */,
+				98CAF1182F8B9D3B0077F187 /* CallGuardApp.swift */,
+				98CAF11A2F8B9D3B0077F187 /* ContentView.swift */,
+				98CAF11C2F8B9D3D0077F187 /* Assets.xcassets */,
+				98CAF11E2F8B9D3D0077F187 /* Preview Content */,
+			);
+			path = CallGuard;
+			sourceTree = "<group>";
+		};
+		98CAF11E2F8B9D3D0077F187 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				98CAF11F2F8B9D3D0077F187 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		98EACAF02F8BAA4700C0CC5C /* CallGuardExtension */ = {
+			isa = PBXGroup;
+			children = (
+				98EACAFC2F8BB2FB00C0CC5C /* CallGuardExtension.entitlements */,
+				98EACAF12F8BAA4700C0CC5C /* CallDirectoryHandler.swift */,
+				98EACAF32F8BAA4700C0CC5C /* Info.plist */,
+			);
+			path = CallGuardExtension;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		98CAF1142F8B9D3B0077F187 /* CallGuard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 98CAF1232F8B9D3D0077F187 /* Build configuration list for PBXNativeTarget "CallGuard" */;
+			buildPhases = (
+				98CAF1112F8B9D3B0077F187 /* Sources */,
+				98CAF1122F8B9D3B0077F187 /* Frameworks */,
+				98CAF1132F8B9D3B0077F187 /* Resources */,
+				98EACAF72F8BAA4700C0CC5C /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				98EACAF52F8BAA4700C0CC5C /* PBXTargetDependency */,
+			);
+			name = CallGuard;
+			productName = CallGuard;
+			productReference = 98CAF1152F8B9D3B0077F187 /* CallGuard.app */;
+			productType = "com.apple.product-type.application";
+		};
+		98EACAEE2F8BAA4700C0CC5C /* CallGuardExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 98EACAFA2F8BAA4700C0CC5C /* Build configuration list for PBXNativeTarget "CallGuardExtension" */;
+			buildPhases = (
+				98EACAEB2F8BAA4700C0CC5C /* Sources */,
+				98EACAEC2F8BAA4700C0CC5C /* Frameworks */,
+				98EACAED2F8BAA4700C0CC5C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CallGuardExtension;
+			productName = CallGuardExtension;
+			productReference = 98EACAEF2F8BAA4700C0CC5C /* CallGuardExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98CAF10D2F8B9D3B0077F187 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					98CAF1142F8B9D3B0077F187 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					98EACAEE2F8BAA4700C0CC5C = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 98CAF1102F8B9D3B0077F187 /* Build configuration list for PBXProject "CallGuard" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 98CAF10C2F8B9D3B0077F187;
+			productRefGroup = 98CAF1162F8B9D3B0077F187 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				98CAF1142F8B9D3B0077F187 /* CallGuard */,
+				98EACAEE2F8BAA4700C0CC5C /* CallGuardExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		98CAF1132F8B9D3B0077F187 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98CAF1202F8B9D3D0077F187 /* Preview Assets.xcassets in Resources */,
+				98CAF11D2F8B9D3D0077F187 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98EACAED2F8BAA4700C0CC5C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		98CAF1112F8B9D3B0077F187 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98CAF12F2F8BA0160077F187 /* SettingsView.swift in Sources */,
+				98CAF1292F8B9FF40077F187 /* SearchView.swift in Sources */,
+				98CAF11B2F8B9D3B0077F187 /* ContentView.swift in Sources */,
+				98CAF1272F8B9FD90077F187 /* APIService.swift in Sources */,
+				98CAF12B2F8BA0020077F187 /* ReportView.swift in Sources */,
+				98CAF12D2F8BA00F0077F187 /* FeedView.swift in Sources */,
+				98CAF1192F8B9D3B0077F187 /* CallGuardApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98EACAEB2F8BAA4700C0CC5C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98EACAF22F8BAA4700C0CC5C /* CallDirectoryHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		98EACAF52F8BAA4700C0CC5C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 98EACAEE2F8BAA4700C0CC5C /* CallGuardExtension */;
+			targetProxy = 98EACAF42F8BAA4700C0CC5C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		98CAF1212F8B9D3D0077F187 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		98CAF1222F8B9D3D0077F187 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		98CAF1242F8B9D3D0077F187 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CallGuard/CallGuard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CallGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = PQU3GDH7D4;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BrunoBlock;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcovolp3.CallGuard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		98CAF1252F8B9D3D0077F187 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CallGuard/CallGuard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"CallGuard/Preview Content\"";
+				DEVELOPMENT_TEAM = PQU3GDH7D4;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = BrunoBlock;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcovolp3.CallGuard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		98EACAF82F8BAA4700C0CC5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_ENTITLEMENTS = CallGuardExtension/CallGuardExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PQU3GDH7D4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CallGuardExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CallGuardExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcovolp3.CallGuard.CallGuardExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		98EACAF92F8BAA4700C0CC5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_ENTITLEMENTS = CallGuardExtension/CallGuardExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PQU3GDH7D4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CallGuardExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = CallGuardExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcovolp3.CallGuard.CallGuardExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		98CAF1102F8B9D3B0077F187 /* Build configuration list for PBXProject "CallGuard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98CAF1212F8B9D3D0077F187 /* Debug */,
+				98CAF1222F8B9D3D0077F187 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		98CAF1232F8B9D3D0077F187 /* Build configuration list for PBXNativeTarget "CallGuard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98CAF1242F8B9D3D0077F187 /* Debug */,
+				98CAF1252F8B9D3D0077F187 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		98EACAFA2F8BAA4700C0CC5C /* Build configuration list for PBXNativeTarget "CallGuardExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98EACAF82F8BAA4700C0CC5C /* Debug */,
+				98EACAF92F8BAA4700C0CC5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 98CAF10D2F8B9D3B0077F187 /* Project object */;
+}
