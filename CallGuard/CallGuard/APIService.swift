@@ -6,6 +6,7 @@ struct LookupResult: Codable {
     let spam_score: Int
     let category: String?
     let total_reports: Int
+    let unique_reporters: Int?
     let risk_level: String
     let operator_name: String?
     let action_suggested: String
@@ -55,11 +56,41 @@ class APIService {
     
     private let baseURL = "https://callguard-production.up.railway.app"
     
-    func lookup(number: String) async throws -> LookupResult {
-        var cleanNumber = number.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !cleanNumber.hasPrefix("+") {
-            cleanNumber = "+39" + cleanNumber
+    // Device ID unico per anti-abuso
+    var deviceId: String {
+        if let existing = UserDefaults.standard.string(forKey: "brunoblock_device_id") {
+            return existing
         }
+        let newId = UUID().uuidString
+        UserDefaults.standard.set(newId, forKey: "brunoblock_device_id")
+        return newId
+    }
+    
+    // Pulisce il numero di telefono
+    static func cleanPhoneNumber(_ number: String) -> String {
+        var cleaned = number.replacingOccurrences(of: " ", with: "")
+            .replacingOccurrences(of: "-", with: "")
+            .replacingOccurrences(of: "(", with: "")
+            .replacingOccurrences(of: ")", with: "")
+            .replacingOccurrences(of: ".", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if !cleaned.hasPrefix("+") {
+            cleaned = "+39" + cleaned
+        }
+        return cleaned
+    }
+    
+    // Verifica se è un numero valido
+    static func isValidPhoneNumber(_ number: String) -> Bool {
+        let cleaned = cleanPhoneNumber(number)
+        let regex = try? NSRegularExpression(pattern: "^\\+\\d{8,15}$")
+        let range = NSRange(cleaned.startIndex..., in: cleaned)
+        return regex?.firstMatch(in: cleaned, range: range) != nil
+    }
+    
+    func lookup(number: String) async throws -> LookupResult {
+        let cleanNumber = APIService.cleanPhoneNumber(number)
         
         guard let encoded = cleanNumber.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
               let url = URL(string: "\(baseURL)/api/lookup/\(encoded)") else {
@@ -71,10 +102,7 @@ class APIService {
     }
     
     func report(phoneNumber: String, reportType: String, category: String, description: String) async throws -> ReportResponse {
-        var cleanNumber = phoneNumber.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !cleanNumber.hasPrefix("+") {
-            cleanNumber = "+39" + cleanNumber
-        }
+        let cleanNumber = APIService.cleanPhoneNumber(phoneNumber)
         
         guard let url = URL(string: "\(baseURL)/api/report") else {
             throw URLError(.badURL)
@@ -83,6 +111,7 @@ class APIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(deviceId, forHTTPHeaderField: "X-Device-Id")
         
         let body = ReportRequest(
             phone_number: cleanNumber,
@@ -140,13 +169,16 @@ class APIService {
         
         for item in numbers {
             guard let numberStr = item["number"] as? String,
-                  let label = item["label"] as? String else { continue }
+                  let label = item["label"] as? String,
+                  let score = item["spam_score"] as? Int else { continue }
             
             let cleaned = numberStr.replacingOccurrences(of: "+", with: "")
+                .replacingOccurrences(of: " ", with: "")
             if let numberInt = Int64(cleaned) {
                 callKitNumbers.append([
                     "number": numberInt,
-                    "label": label
+                    "label": label,
+                    "score": score
                 ])
             }
         }
@@ -158,5 +190,12 @@ class APIService {
         if let jsonData = try? JSONSerialization.data(withJSONObject: callKitNumbers) {
             try? jsonData.write(to: fileURL)
         }
+        
+        // Salva soglia blocco
+        let blockThreshold = UserDefaults.standard.integer(forKey: "block_threshold")
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.marcovolp3.CallGuard") {
+            sharedDefaults.set(blockThreshold > 0 ? blockThreshold : 90, forKey: "block_threshold")
+        }
     }
 }
+

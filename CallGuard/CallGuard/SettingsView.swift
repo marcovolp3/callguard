@@ -2,14 +2,27 @@ import SwiftUI
 import CallKit
 
 struct SettingsView: View {
-    @State private var callKitEnabled = false
     @State private var lastSync: String = "Mai"
     @State private var syncedNumbers: Int = 0
     @State private var isSyncing = false
+    @AppStorage("block_threshold") private var blockThreshold: Double = 90
+    
+    var blockDescription: String {
+        if blockThreshold >= 95 {
+            return "Solo spam verificato — massima cautela"
+        } else if blockThreshold >= 85 {
+            return "Alto rischio — blocca i numeri più segnalati"
+        } else if blockThreshold >= 70 {
+            return "Rischio medio-alto — protezione bilanciata"
+        } else {
+            return "Aggressivo — blocca anche numeri con poche segnalazioni"
+        }
+    }
     
     var body: some View {
         NavigationView {
             List {
+                // Protezione chiamate
                 Section {
                     HStack {
                         Image(systemName: "phone.badge.checkmark")
@@ -34,7 +47,7 @@ struct SettingsView: View {
                         StepRow(number: "1", text: "Apri Impostazioni dell'iPhone")
                         StepRow(number: "2", text: "Vai su Telefono")
                         StepRow(number: "3", text: "Tocca Blocco chiamate e identificazione")
-                        StepRow(number: "4", text: "Attiva CallGuard")
+                        StepRow(number: "4", text: "Attiva BrunoBlock")
                     }
                     .padding(.vertical, 8)
                     
@@ -54,6 +67,54 @@ struct SettingsView: View {
                     Text("Protezione chiamate")
                 }
                 
+                // Blocco automatico
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Soglia blocco automatico")
+                                .font(.system(size: 14, weight: .semibold))
+                            Spacer()
+                            Text("\(Int(blockThreshold))%")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(.red)
+                        }
+                        
+                        Slider(value: $blockThreshold, in: 50...100, step: 5)
+                            .tint(.red)
+                        
+                        Text(blockDescription)
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                        
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
+                                Circle().fill(Color.green).frame(width: 8, height: 8)
+                                Text("Score < 50%: nessun avviso")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            HStack(spacing: 8) {
+                                Circle().fill(Color.orange).frame(width: 8, height: 8)
+                                Text("Score 50-\(Int(blockThreshold))%: etichetta spam, il telefono squilla")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                            HStack(spacing: 8) {
+                                Circle().fill(Color.red).frame(width: 8, height: 8)
+                                Text("Score ≥ \(Int(blockThreshold))%: blocco automatico")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .padding(.top, 4)
+                    }
+                } header: {
+                    Text("Blocco automatico")
+                } footer: {
+                    Text("I numeri con score superiore alla soglia vengono bloccati automaticamente. Il telefono non squillerà.")
+                }
+                
+                // Sincronizzazione
                 Section {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
@@ -100,11 +161,12 @@ struct SettingsView: View {
                     Text("Database locale")
                 }
                 
+                // Info
                 Section {
                     HStack {
                         Text("Versione")
                         Spacer()
-                        Text("1.0.0")
+                        Text("2.0.0")
                             .foregroundColor(.gray)
                     }
                     HStack {
@@ -134,9 +196,6 @@ struct SettingsView: View {
                 let numbers = try await APIService.shared.syncNumbers()
                 await MainActor.run {
                     syncedNumbers = numbers.count
-                    
-                    verifySharedFile()
-                    
                     reloadCallDirectory()
                     let formatter = DateFormatter()
                     formatter.dateFormat = "HH:mm, d MMM"
@@ -152,40 +211,14 @@ struct SettingsView: View {
         }
     }
     
-    private func verifySharedFile() {
-        guard let sharedURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.com.marcovolp3.CallGuard"
-        ) else {
-            print("DEBUG: App Group NON trovato!")
-            return
-        }
-        
-        let fileURL = sharedURL.appendingPathComponent("spam_numbers.json")
-        
-        guard let data = try? Data(contentsOf: fileURL) else {
-            print("DEBUG: File spam_numbers.json NON trovato!")
-            return
-        }
-        
-        guard let numbers = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
-            print("DEBUG: JSON non valido!")
-            return
-        }
-        
-        print("DEBUG: File contiene \(numbers.count) numeri")
-        for (i, item) in numbers.enumerated() where (item["number"] as? Int64 ?? 0) == 393272386349 {
-            print("DEBUG: [\(i)] number=\(item["number"] ?? "nil") label=\(item["label"] ?? "nil")")
-        }
-    }
-    
     private func reloadCallDirectory() {
         CXCallDirectoryManager.sharedInstance.reloadExtension(
             withIdentifier: "com.marcovolp3.CallGuard.CallGuardExtension"
         ) { error in
             if let error = error {
-                print("DEBUG: Errore reload CallDirectory: \(error)")
+                print("Errore reload CallDirectory: \(error)")
             } else {
-                print("DEBUG: CallDirectory aggiornata con successo")
+                print("CallDirectory aggiornata con successo")
             }
         }
     }
@@ -208,3 +241,4 @@ struct StepRow: View {
         }
     }
 }
+

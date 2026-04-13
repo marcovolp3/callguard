@@ -64,17 +64,14 @@ router.post('/report', (req, res) => {
   const deviceHash = req.headers['x-device-id'] || 'web_' + Date.now();
 
   try {
-    // Anti-abuso: verifica device
     const device = getOrCreateDevice(req.db, deviceHash);
 
-    // Limite giornaliero
     if (device.reports_today >= MAX_REPORTS_PER_DAY) {
       return res.status(429).json({
         error: 'Hai raggiunto il limite di ' + MAX_REPORTS_PER_DAY + ' segnalazioni al giorno.'
       });
     }
 
-    // Cerca o crea il numero
     let phoneNumber = req.db.prepare('SELECT * FROM phone_numbers WHERE number = ?').get(number);
 
     if (!phoneNumber) {
@@ -85,20 +82,21 @@ router.post('/report', (req, res) => {
 
       phoneNumber = req.db.prepare('SELECT * FROM phone_numbers WHERE id = ?').get(result.lastInsertRowid);
     } else {
-      // Verifica duplicato: stesso device + stesso numero oggi
       const existingReport = req.db.prepare(
         "SELECT id FROM reports WHERE phone_number_id = ? AND device_hash = ? AND created_at > date('now')"
       ).get(phoneNumber.id, deviceHash);
 
       if (existingReport) {
-        return res.status(409).json({
-          error: 'Hai già segnalato questo numero oggi.',
+        return res.status(200).json({
+          success: true,
+          already_reported: true,
           phone_number: number,
-          current_spam_score: phoneNumber.spam_score
+          new_spam_score: phoneNumber.spam_score,
+          total_reports: phoneNumber.total_reports,
+          message: 'Hai già segnalato questo numero oggi. Grazie per il tuo contributo!'
         });
       }
 
-      // Conta reporter unici
       const uniqueReporters = req.db.prepare(
         'SELECT COUNT(DISTINCT device_hash) as count FROM reports WHERE phone_number_id = ?'
       ).get(phoneNumber.id);
@@ -108,23 +106,21 @@ router.post('/report', (req, res) => {
       ).run((uniqueReporters.count || 0) + 1, category, phoneNumber.id);
     }
 
-    // Inserisci segnalazione
     req.db.prepare(
       'INSERT INTO reports (phone_number_id, report_type, category, description, call_duration, device_hash) VALUES (?, ?, ?, ?, ?, ?)'
     ).run(phoneNumber.id, report_type, category || null, description || null, call_duration || 0, deviceHash);
 
-    // Aggiorna contatore device
     req.db.prepare(
       'UPDATE devices SET total_reports = total_reports + 1, reports_today = reports_today + 1 WHERE device_hash = ?'
     ).run(deviceHash);
 
-    // Ricalcola score
     const newScore = recalculateScore(req.db, phoneNumber.id);
 
     const updated = req.db.prepare('SELECT * FROM phone_numbers WHERE id = ?').get(phoneNumber.id);
 
     res.status(201).json({
       success: true,
+      already_reported: false,
       phone_number: number,
       new_spam_score: newScore,
       total_reports: updated.total_reports,

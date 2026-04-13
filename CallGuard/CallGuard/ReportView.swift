@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ReportView: View {
+    @Binding var prefillNumber: String
     @State private var phoneNumber = ""
     @State private var reportType = "spam"
     @State private var category = ""
@@ -8,6 +9,8 @@ struct ReportView: View {
     @State private var isLoading = false
     @State private var successMessage: String?
     @State private var errorMessage: String?
+    
+    let darkBg = Color(red: 0.08, green: 0.11, blue: 0.14)
     
     let reportTypes = [
         ("spam", "Spam generico"),
@@ -27,13 +30,28 @@ struct ReportView: View {
     ]
     
     var body: some View {
-        NavigationView {
-            ScrollView {
+        ScrollView {
+            VStack(spacing: 0) {
+                // Header
+                VStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 32))
+                        .foregroundColor(.red)
+                    Text("Segnala un numero")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.white)
+                    Text("Aiuta la community a proteggersi")
+                        .font(.system(size: 13))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(darkBg)
+                
+                // Form
                 VStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Numero di telefono")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.secondary)
+                    // Phone
+                    FormField(label: "Numero di telefono") {
                         TextField("+39 333 1234567", text: $phoneNumber)
                             .keyboardType(.phonePad)
                             .padding(12)
@@ -41,10 +59,18 @@ struct ReportView: View {
                             .cornerRadius(10)
                     }
                     
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Tipo di segnalazione")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.secondary)
+                    if !phoneNumber.isEmpty && !APIService.isValidPhoneNumber(phoneNumber) {
+                        HStack {
+                            Image(systemName: "exclamationmark.circle")
+                            Text("Usa solo cifre, es: 3331234567")
+                        }
+                        .font(.system(size: 12))
+                        .foregroundColor(.orange)
+                        .padding(.horizontal, 4)
+                    }
+                    
+                    // Type
+                    FormField(label: "Tipo di segnalazione") {
                         Picker("Tipo", selection: $reportType) {
                             ForEach(reportTypes, id: \.0) { type in
                                 Text(type.1).tag(type.0)
@@ -57,10 +83,8 @@ struct ReportView: View {
                         .cornerRadius(10)
                     }
                     
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Categoria")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.secondary)
+                    // Category
+                    FormField(label: "Categoria") {
                         Picker("Categoria", selection: $category) {
                             ForEach(categories, id: \.0) { cat in
                                 Text(cat.1).tag(cat.0)
@@ -73,10 +97,8 @@ struct ReportView: View {
                         .cornerRadius(10)
                     }
                     
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Note (opzionale)")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.secondary)
+                    // Notes
+                    FormField(label: "Note (opzionale)") {
                         TextField("Es: Voce registrata, offerta gas...", text: $description, axis: .vertical)
                             .lineLimit(3...6)
                             .padding(12)
@@ -84,27 +106,29 @@ struct ReportView: View {
                             .cornerRadius(10)
                     }
                     
+                    // Submit
                     Button(action: submitReport) {
-                        HStack {
+                        HStack(spacing: 8) {
                             if isLoading {
                                 ProgressView()
                                     .tint(.white)
                             } else {
-                                Image(systemName: "exclamationmark.bubble.fill")
+                                Image(systemName: "paperplane.fill")
                                 Text("Invia segnalazione")
-                                    .fontWeight(.semibold)
+                                    .fontWeight(.bold)
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(14)
-                        .background(phoneNumber.isEmpty ? Color.gray : Color.red)
+                        .padding(15)
+                        .background(canSubmit ? Color.red : Color.gray.opacity(0.5))
                         .foregroundColor(.white)
-                        .cornerRadius(12)
+                        .cornerRadius(14)
                     }
-                    .disabled(phoneNumber.isEmpty || isLoading)
+                    .disabled(!canSubmit || isLoading)
                     
+                    // Messages
                     if let success = successMessage {
-                        HStack {
+                        HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
                             Text(success)
                         }
@@ -117,23 +141,40 @@ struct ReportView: View {
                     }
                     
                     if let error = errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.red)
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.circle")
+                            Text(error)
+                        }
+                        .font(.system(size: 14))
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity)
+                        .padding(12)
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(10)
                     }
                 }
-                .padding()
+                .padding(20)
             }
-            .navigationTitle("Segnala")
-            .onTapGesture {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .background(Color(.systemGroupedBackground))
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .onChange(of: prefillNumber) { newValue in
+            if !newValue.isEmpty {
+                phoneNumber = newValue
+                prefillNumber = ""
             }
         }
     }
     
+    var canSubmit: Bool {
+        !phoneNumber.isEmpty && APIService.isValidPhoneNumber(phoneNumber)
+    }
+    
     private func submitReport() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        guard !phoneNumber.isEmpty else { return }
+        guard canSubmit else { return }
         isLoading = true
         errorMessage = nil
         successMessage = nil
@@ -161,3 +202,19 @@ struct ReportView: View {
         }
     }
 }
+
+struct FormField<Content: View>: View {
+    let label: String
+    @ViewBuilder let content: () -> Content
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.secondary)
+                .textCase(.uppercase)
+            content()
+        }
+    }
+}
+

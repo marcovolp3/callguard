@@ -7,18 +7,40 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         context.delegate = self
 
         let numbers = loadSpamNumbers()
-        print("CallDirectory: caricati \(numbers.count) numeri")
+        let blockThreshold = getBlockThreshold()
+        
+        var identifyCount = 0
+        var blockCount = 0
 
+        // Prima: aggiungi tutti i numeri da BLOCCARE (score >= soglia)
+        // I numeri bloccati DEVONO essere aggiunti prima di quelli identificati
+        // e DEVONO essere in ordine crescente
+        let toBlock = numbers.filter { $0.score >= blockThreshold }
+        for entry in toBlock {
+            context.addBlockingEntry(withNextSequentialPhoneNumber: entry.phoneNumber)
+            blockCount += 1
+        }
+        
+        // Poi: aggiungi tutti i numeri da IDENTIFICARE (tutti, inclusi quelli bloccati)
         for entry in numbers {
-            print("CallDirectory: aggiunto \(entry.phoneNumber) - \(entry.label)")
             context.addIdentificationEntry(withNextSequentialPhoneNumber: entry.phoneNumber, label: entry.label)
+            identifyCount += 1
         }
 
+        print("CallDirectory: \(identifyCount) identificati, \(blockCount) bloccati (soglia: \(blockThreshold)%)")
         context.completeRequest()
     }
 
-    private func loadSpamNumbers() -> [(phoneNumber: CXCallDirectoryPhoneNumber, label: String)] {
-        var entries: [(CXCallDirectoryPhoneNumber, String)] = []
+    private func getBlockThreshold() -> Int {
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.marcovolp3.CallGuard") {
+            let threshold = sharedDefaults.integer(forKey: "block_threshold")
+            return threshold > 0 ? threshold : 90
+        }
+        return 90
+    }
+
+    private func loadSpamNumbers() -> [(phoneNumber: CXCallDirectoryPhoneNumber, label: String, score: Int)] {
+        var entries: [(CXCallDirectoryPhoneNumber, String, Int)] = []
 
         guard let sharedURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: "group.com.marcovolp3.CallGuard"
@@ -28,20 +50,12 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         }
 
         let fileURL = sharedURL.appendingPathComponent("spam_numbers.json")
-        
-        print("CallDirectory: cerco file in \(fileURL.path)")
 
-        guard let data = try? Data(contentsOf: fileURL) else {
-            print("CallDirectory: ERRORE - file non trovato")
+        guard let data = try? Data(contentsOf: fileURL),
+              let numbers = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
+            print("CallDirectory: ERRORE - file non trovato o JSON non valido")
             return entries
         }
-        
-        guard let numbers = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
-            print("CallDirectory: ERRORE - JSON non valido")
-            return entries
-        }
-
-        print("CallDirectory: trovati \(numbers.count) numeri nel file JSON")
 
         let sorted = numbers.sorted {
             ($0["number"] as? Int64 ?? 0) < ($1["number"] as? Int64 ?? 0)
@@ -50,11 +64,10 @@ class CallDirectoryHandler: CXCallDirectoryProvider {
         for item in sorted {
             if let number = item["number"] as? Int64,
                let label = item["label"] as? String {
-                entries.append((CXCallDirectoryPhoneNumber(number), label))
+                let score = item["score"] as? Int ?? 0
+                entries.append((CXCallDirectoryPhoneNumber(number), label, score))
             }
         }
-        
-        print("CallDirectory: \(entries.count) numeri convertiti con successo")
 
         return entries
     }
@@ -65,3 +78,4 @@ extension CallDirectoryHandler: CXCallDirectoryExtensionContextDelegate {
         print("CallDirectory ERRORE: \(error.localizedDescription)")
     }
 }
+
